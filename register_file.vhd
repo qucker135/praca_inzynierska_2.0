@@ -22,6 +22,8 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
+use work.mux_out_register_file_types.all;
+
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
 --use IEEE.NUMERIC_STD.ALL;
@@ -47,11 +49,8 @@ component demux_we_register_file is
            we_out_vec : out STD_LOGIC_VECTOR(3 downto 0));
 end component;
 
-component mux_out_register_file is
-    Port ( reg_out0 : in STD_LOGIC_VECTOR (7 downto 0);
-           reg_out1 : in STD_LOGIC_VECTOR (7 downto 0);
-           reg_out2 : in STD_LOGIC_VECTOR (7 downto 0);
-           reg_out3 : in STD_LOGIC_VECTOR (7 downto 0);
+component mux_out_register_file is 
+    Port ( reg_out : in mux_input_type;
            addr_in : in STD_LOGIC_VECTOR(1 downto 0);
            mux_out : out STD_LOGIC_VECTOR(7 downto 0));
 end component;
@@ -65,10 +64,7 @@ end component;
 
     signal pom_we_out_vec : STD_LOGIC_VECTOR(3 downto 0);
     
-    signal pom_data_out_0 : STD_LOGIC_VECTOR(7 downto 0);
-    signal pom_data_out_1 : STD_LOGIC_VECTOR(7 downto 0);
-    signal pom_data_out_2 : STD_LOGIC_VECTOR(7 downto 0);
-    signal pom_data_out_3 : STD_LOGIC_VECTOR(7 downto 0);
+    signal pom_data_out : mux_input_type;
 
 begin
 
@@ -84,7 +80,7 @@ begin
         clk => clk,
         we => pom_we_out_vec(0),
         din => data_in,
-        dout => pom_data_out_0
+        dout => pom_data_out(0)
     );
     
     u_we_reg_8_1: we_reg_8
@@ -92,7 +88,7 @@ begin
         clk => clk,
         we => pom_we_out_vec(1),
         din => data_in,
-        dout => pom_data_out_1
+        dout => pom_data_out(1)
     );
     
     u_we_reg_8_2: we_reg_8
@@ -100,7 +96,7 @@ begin
         clk => clk,
         we => pom_we_out_vec(2),
         din => data_in,
-        dout => pom_data_out_2
+        dout => pom_data_out(2)
     );
     
     u_we_reg_8_3: we_reg_8
@@ -108,15 +104,12 @@ begin
         clk => clk,
         we => pom_we_out_vec(3),
         din => data_in,
-        dout => pom_data_out_3
+        dout => pom_data_out(3)
     );
     
     u_mux_out_register_file: mux_out_register_file
     port map(
-        reg_out0 => pom_data_out_0,
-        reg_out1 => pom_data_out_1,
-        reg_out2 => pom_data_out_2,
-        reg_out3 => pom_data_out_3,
+        reg_out => pom_data_out,
         addr_in => addr_in,
         mux_out => data_out
     );
