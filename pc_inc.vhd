@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 14.12.2022 19:34:30
+-- Create Date: 17.12.2022 12:21:18
 -- Design Name: 
--- Module Name: mux_out_register_file_types - Behavioral
+-- Module Name: pc_inc - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -21,6 +21,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -31,8 +32,15 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-package mux_out_register_file_types is
+entity pc_inc is
+    Port ( pc_in : in STD_LOGIC_VECTOR (12 downto 0);
+           pc_inc_out : out STD_LOGIC_VECTOR (12 downto 0));
+end pc_inc;
 
-    type mux_input_type is array (164 downto 0) of std_logic_vector(7 downto 0);
+architecture Behavioral of pc_inc is
 
-end mux_out_register_file_types;
+begin
+
+    pc_inc_out <= std_logic_vector(unsigned(pc_in) + 1);
+
+end Behavioral;

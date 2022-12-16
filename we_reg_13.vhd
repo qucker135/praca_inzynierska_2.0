@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 14.12.2022 19:34:30
+-- Create Date: 08.12.2022 15:15:25
 -- Design Name: 
--- Module Name: mux_out_register_file_types - Behavioral
+-- Module Name: we_reg_13 - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -31,8 +31,24 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-package mux_out_register_file_types is
+entity we_reg_13 is
+    Port ( clk : in STD_LOGIC;
+           we : in STD_LOGIC;
+           din : in STD_LOGIC_VECTOR (12 downto 0);
+           dout : out STD_LOGIC_VECTOR (12 downto 0));
+end we_reg_13;
 
-    type mux_input_type is array (164 downto 0) of std_logic_vector(7 downto 0);
+architecture Behavioral of we_reg_13 is
 
-end mux_out_register_file_types;
+begin
+
+    process(clk)
+    begin
+        if rising_edge(clk) then
+            if we = '1' then
+                dout <= din;
+            end if;
+        end if;
+    end process;
+
+end Behavioral;
