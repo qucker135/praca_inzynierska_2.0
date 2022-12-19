@@ -80,13 +80,6 @@ component we_reg_13 is
            dout : out STD_LOGIC_VECTOR (12 downto 0));
 end component;
 
-component mux_1 is
-    Port ( d0 : in STD_LOGIC;
-           d1 : in STD_LOGIC;
-           s : in STD_LOGIC;
-           dout : out STD_LOGIC);
-end component;
-
 component mux_pc_input is
     Port ( value_from_stack : in STD_LOGIC_VECTOR (12 downto 0);
            ext_k_to_pc : in STD_LOGIC_VECTOR (12 downto 0);
@@ -103,17 +96,37 @@ component pc_inc is
            pc_inc_out : out STD_LOGIC_VECTOR (12 downto 0));
 end component;
 
+component status_input_logic is
+    Port ( din : in STD_LOGIC_VECTOR (7 downto 0);
+           gwe : in STD_LOGIC;
+           flags : in STD_LOGIC_VECTOR (2 downto 0);
+           we_flags : in STD_LOGIC_VECTOR (2 downto 0);
+           cur_status : in STD_LOGIC_VECTOR (7 downto 0);
+           dout : out STD_LOGIC_VECTOR (7 downto 0));
+end component;
+
+component intcon_input_logic is
+    Port ( gie_set : in STD_LOGIC;
+           gwe : in STD_LOGIC;
+           din : in STD_LOGIC_VECTOR (7 downto 0);
+           cur_intcon : in STD_LOGIC_VECTOR (7 downto 0);
+           dout : out STD_LOGIC_VECTOR (7 downto 0));
+end component;
+
 signal pom_we_out_vec : STD_LOGIC_VECTOR(164 downto 0);
     
 signal pom_data_out : mux_input_type;
 
+signal pom_pc_we_in : STD_LOGIC;
 signal pom_pc_in_sig_13 : STD_LOGIC_VECTOR(12 downto 0);
 signal pom_pc_out_sig_13 : STD_LOGIC_VECTOR(12 downto 0);
 signal pom_pc_inc_sig_13 : STD_LOGIC_VECTOR(12 downto 0);
 
-signal pom_status_input: STD_LOGIC_VECTOR(7 downto 0);
+signal pom_status_reg_input_sig: STD_LOGIC_VECTOR(7 downto 0);
+signal pom_status_reg_we_sig: STD_LOGIC;
 
-signal pom_intcon_input: STD_LOGIC_VECTOR(7 downto 0);
+signal pom_intcon_we_in : STD_LOGIC;
+signal pom_intcon_reg_input_sig : STD_LOGIC_VECTOR(7 downto 0);
 
 begin
 
@@ -140,6 +153,8 @@ begin
         din => data_in,
         dout => pom_data_out(1)
     );
+
+    pom_pc_we_in <= pom_we_out_vec(2) or str_inc_pc or str_k_to_pc or str_from_stack;
     
     u_mux_pc_input: mux_pc_input
     port map(
@@ -158,7 +173,7 @@ begin
     u_we_reg_13_pc: we_reg_13
     port map(
         clk => clk,
-        we => pom_we_out_vec(2),
+        we => pom_pc_we_in,
         din => pom_pc_in_sig_13,
         dout => pom_pc_out_sig_13
     );
@@ -172,38 +187,24 @@ begin
     pom_data_out(2) <= pom_pc_out_sig_13(7 downto 0);
 
     pc_out <= pom_pc_out_sig_13;
-    
-    u_mux_1_z_flag : mux_1
-    port map(
-        d0 => data_in(2),
-        d1 => status_flags(2),
-        s => we_status_flags(2),
-        dout => pom_status_input(2)
-    );
 
-    u_mux_1_dc_flag : mux_1
-    port map(
-        d0 => data_in(1),
-        d1 => status_flags(1),
-        s => we_status_flags(1),
-        dout => pom_status_input(1)
-    );
+    pom_status_reg_we_sig <= pom_we_out_vec(3) or we_status_flags(2) or we_status_flags(1) or we_status_flags(0);
 
-    u_mux_1_c_flag : mux_1
+    u_status_input_logic: status_input_logic
     port map(
-        d0 => data_in(0),
-        d1 => status_flags(0),
-        s => we_status_flags(0),
-        dout => pom_status_input(0)
+        din => data_in,
+        gwe => pom_we_out_vec(3),
+        flags => status_flags,
+        we_flags => we_status_flags,
+        cur_status => pom_data_out(3),
+        dout => pom_status_reg_input_sig
     );
-
-    pom_status_input(7 downto 3) <= data_in(7 downto 3);
     
     u_we_reg_8_status: we_reg_8
     port map(
         clk => clk,
-        we => pom_we_out_vec(3),
-        din => pom_status_input,
+        we => pom_status_reg_we_sig,
+        din => pom_status_reg_input_sig,
         dout => pom_data_out(3)
     );
 
@@ -275,14 +276,22 @@ begin
         dout => pom_data_out(11)
     );
 
-    pom_intcon_input(7) <= data_in(7) or gie_set;
-    pom_intcon_input(6 downto 0) <= data_in(6 downto 0);
+    pom_intcon_we_in <= gie_set or pom_we_out_vec(12);
+
+    u_intcon_input_logic: intcon_input_logic
+    port map(
+        gie_set => gie_set,
+        gwe => pom_we_out_vec(12),
+        din => data_in,
+        cur_intcon => pom_data_out(12),
+        dout => pom_intcon_reg_input_sig
+    );
 
     u_we_reg_8_intcon: we_reg_8
     port map(
         clk => clk,
-        we => pom_we_out_vec(12),
-        din => pom_intcon_input,
+        we => pom_intcon_we_in,
+        din => pom_intcon_reg_input_sig,
         dout => pom_data_out(12)
     );
 
