@@ -43,12 +43,20 @@ entity st_mch_test2 is
            alu_curC : out STD_LOGIC;
            we_wreg : out STD_LOGIC;
            we_flags : out STD_LOGIC;
-           addr_in : out STD_LOGIC_VECTOR(1 downto 0));
+           addr_in : out STD_LOGIC_VECTOR(8 downto 0);
+           value_from_stack : out STD_LOGIC_VECTOR(12 downto 0);
+           str_from_stack : out STD_LOGIC;
+           value_k_to_pc : out STD_LOGIC_VECTOR(10 downto 0);
+           str_k_to_pc : out STD_LOGIC;
+           str_inc_pc : out STD_LOGIC;
+           gie_set : out STD_LOGIC;
+           status_flags : out STD_LOGIC_VECTOR(2 downto 0);
+           we_status_flags : out STD_LOGIC_VECTOR(2 downto 0));
 end st_mch_test2;
 
 architecture Behavioral of st_mch_test2 is
 
-    type clock_phase is (Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17, Q18);
+    type clock_phase is (Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17, Q18, Q19, Q20, Q21, Q22, Q23, Q24, Q25, Q26, Q27, Q28, Q29, Q30);
     
     signal clock_phase_s : clock_phase := Q1;
 
@@ -70,7 +78,15 @@ begin
                     alu_curC <= '1';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "00";
+                    addr_in <= B"0_0000_0000";
+                    value_from_stack <= B"0_0000_0000_0000";
+                    str_from_stack <= '0';
+                    value_k_to_pc <= B"000_0000_0000";
+                    str_k_to_pc <= '0';
+                    str_inc_pc <= '0';
+                    gie_set <= '0';
+                    status_flags <= B"000";
+                    we_status_flags <= B"000";
                 when Q2 => 
                     clock_phase_s <= Q3;
                     ir_in <= X"FE";
@@ -83,7 +99,7 @@ begin
                     alu_curC <= '0';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "11";
+                    addr_in <= B"0_0000_0011";
                 when Q3 => 
                     clock_phase_s <= Q4;
                     ir_in <= X"45";
@@ -96,7 +112,7 @@ begin
                     alu_curC <= '1';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "01";
+                    addr_in <= B"0_0000_0001";
                 when Q4 => 
                     clock_phase_s <= Q5;
                     ir_in <= X"12";
@@ -109,7 +125,7 @@ begin
                     alu_curC <= '1';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "00";
+                    addr_in <= B"0_0000_0000";
                 when Q5 => 
                     clock_phase_s <= Q6;
                     ir_in <= X"87";
@@ -122,7 +138,7 @@ begin
                     alu_curC <= '0';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "10";
+                    addr_in <= B"0_0000_0010";
                 when Q6 => 
                     clock_phase_s <= Q7;
                     ir_in <= X"AB";
@@ -135,7 +151,7 @@ begin
                     alu_curC <= '1';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "11";
+                    addr_in <= B"0_0000_0011";
                 when Q7 => 
                     clock_phase_s <= Q8;
                     ir_in <= X"19";
@@ -148,7 +164,7 @@ begin
                     alu_curC <= '1';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "01";
+                    addr_in <= B"0_0000_0001";
                 when Q8 => 
                     clock_phase_s <= Q9;
                     ir_in <= X"1E";
@@ -161,7 +177,7 @@ begin
                     alu_curC <= '0';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "11";
+                    addr_in <= B"0_0000_0011";
                  when Q9 => 
                     clock_phase_s <= Q10;
                     ir_in <= X"FB";
@@ -174,7 +190,7 @@ begin
                     alu_curC <= '1';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "11";
+                    addr_in <= B"0_1010_0011";
                 when Q10 => 
                     clock_phase_s <= Q11;
                     ir_in <= X"8D";
@@ -187,7 +203,7 @@ begin
                     alu_curC <= '1';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "10";
+                    addr_in <= B"1_0101_1110";
                 when Q11 => 
                     clock_phase_s <= Q12;
                     ir_in <= X"8A";
@@ -200,7 +216,7 @@ begin
                     alu_curC <= '1';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "01";
+                    addr_in <= B"0_1000_1101";
                 when Q12 => 
                     clock_phase_s <= Q13;
                     ir_in <= X"0F";
@@ -213,7 +229,7 @@ begin
                     alu_curC <= '1';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "10";
+                    addr_in <= B"0_1100_0010";
                 when Q13 => 
                     clock_phase_s <= Q14;
                     ir_in <= X"AC";
@@ -226,7 +242,7 @@ begin
                     alu_curC <= '1';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "01";
+                    addr_in <= B"0_0001_0001";
                 when Q14 => 
                     clock_phase_s <= Q15;
                     ir_in <= X"38";
@@ -239,7 +255,7 @@ begin
                     alu_curC <= '1';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "11";
+                    addr_in <= B"0_1010_1111";
                 when Q15 => 
                     clock_phase_s <= Q16;
                     ir_in <= X"03";
@@ -252,7 +268,7 @@ begin
                     alu_curC <= '1';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "00";
+                    addr_in <= B"0_1010_0000";
                 when Q16 => 
                     clock_phase_s <= Q17;
                     ir_in <= X"D5";
@@ -265,7 +281,7 @@ begin
                     alu_curC <= '1';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "11";
+                    addr_in <= B"0_1010_1111";
                 when Q17 => 
                     clock_phase_s <= Q18;
                     ir_in <= X"6A";
@@ -278,9 +294,9 @@ begin
                     alu_curC <= '1';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "10";
+                    addr_in <= B"1_1100_1010";
                 when Q18 => 
-                    clock_phase_s <= Q1;
+                    clock_phase_s <= Q19;
                     ir_in <= X"2C";
                     we_ir <= '1';
                     f_in <= X"3D";
@@ -291,7 +307,101 @@ begin
                     alu_curC <= '1';
                     we_wreg <= '1';
                     we_flags <= '1';
-                    addr_in <= "01";
+                    addr_in <= B"1_0110_1001";
+                when Q19 =>
+                    -- GIE SET TEST
+                    clock_phase_s <= Q20;
+                    value_from_stack <= B"0_0000_0000_0000";
+                    str_from_stack <= '0';
+                    value_k_to_pc <= B"000_0000_0000";
+                    str_k_to_pc <= '0';
+                    str_inc_pc <= '0';
+                    gie_set <= '1';
+                    status_flags <= B"000";
+                    we_status_flags <= B"000";
+                when Q20 =>
+                    clock_phase_s <= Q21;
+                    addr_in <= B"0_0000_1011";
+                    value_from_stack <= B"0_0000_0000_0000";
+                    str_from_stack <= '0';
+                    value_k_to_pc <= B"000_0000_0000";
+                    str_k_to_pc <= '0';
+                    str_inc_pc <= '0';
+                    gie_set <= '0';
+                    status_flags <= B"000";
+                    we_status_flags <= B"000";
+                when Q21 =>
+                    -- FLAGS TESTS
+                    clock_phase_s <= Q22;
+                    value_from_stack <= B"0_0000_0000_0000";
+                    str_from_stack <= '0';
+                    value_k_to_pc <= B"000_0000_0000";
+                    str_k_to_pc <= '0';
+                    str_inc_pc <= '0';
+                    gie_set <= '0';
+                    status_flags <= B"100";
+                    we_status_flags <= B"111";
+                when Q22 =>
+                    -- GOTO & CALL TESTS
+                    clock_phase_s <= Q23;
+                    value_from_stack <= B"0_0000_0000_0000";
+                    str_from_stack <= '0';
+                    value_k_to_pc <= B"010_0111_1001";
+                    str_k_to_pc <= '1';
+                    str_inc_pc <= '0';
+                    gie_set <= '0';
+                    status_flags <= B"000";
+                    we_status_flags <= B"000";
+                when Q23 =>
+                    -- PC INC TEST
+                    clock_phase_s <= Q24;
+                    value_from_stack <= B"0_0000_0000_0000";
+                    str_from_stack <= '0';
+                    value_k_to_pc <= B"010_0111_1001";
+                    str_k_to_pc <= '0';
+                    str_inc_pc <= '1';
+                    gie_set <= '0';
+                    status_flags <= B"000";
+                    we_status_flags <= B"000";
+                when Q24 =>
+                    clock_phase_s <= Q25;
+                when Q25 => 
+                    clock_phase_s <= Q26;
+                when Q26 =>
+                    -- RET** TESTS
+                    clock_phase_s <= Q27;
+                    value_from_stack <= B"1_0111_1001_0110";
+                    str_from_stack <= '1';
+                    value_k_to_pc <= B"000_0000_0000";
+                    str_k_to_pc <= '0';
+                    str_inc_pc <= '0';
+                    gie_set <= '0';
+                    status_flags <= B"000";
+                    we_status_flags <= B"000";
+                when Q27 =>
+                    clock_phase_s <= Q28;
+                    value_from_stack <= B"1_0111_1001_0110";
+                    str_from_stack <= '0';
+                    value_k_to_pc <= B"000_0000_0000";
+                    str_k_to_pc <= '0';
+                    str_inc_pc <= '1';
+                    gie_set <= '0';
+                    status_flags <= B"000";
+                    we_status_flags <= B"000";
+                when Q28 =>
+                    clock_phase_s <= Q29;
+                when Q29 =>
+                    clock_phase_s <= Q30;
+                when Q30 =>
+                    clock_phase_s <= Q1;
+                    value_from_stack <= B"0_0000_0000_0000";
+                    str_from_stack <= '0';
+                    value_k_to_pc <= B"000_0000_0000";
+                    str_k_to_pc <= '0';
+                    str_inc_pc <= '0';
+                    gie_set <= '0';
+                    status_flags <= B"000";
+                    we_status_flags <= B"000";
             end case;
         end if;
     end process;
