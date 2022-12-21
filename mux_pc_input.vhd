@@ -36,6 +36,7 @@ entity mux_pc_input is
            ext_k_to_pc : in STD_LOGIC_VECTOR (12 downto 0);
            pc_inc : in STD_LOGIC_VECTOR (12 downto 0);
            ext_std_input : in STD_LOGIC_VECTOR (12 downto 0);
+           str_gwe : in STD_LOGIC;
            str_inc : in STD_LOGIC;
            str_k_to_pc : in STD_LOGIC;
            str_stack : in STD_LOGIC;
@@ -51,17 +52,20 @@ begin
         ext_k_to_pc,
         pc_inc,
         ext_std_input,
+        str_gwe,
         str_inc,
         str_k_to_pc,
         str_stack
     )
     begin
-        if str_inc = '1' then
-            mux_out <= pc_inc;
+        if str_gwe = '1' then
+            mux_out <= ext_std_input;
         elsif str_k_to_pc = '1' then
             mux_out <= ext_k_to_pc;
         elsif str_stack = '1' then
             mux_out <= value_from_stack;
+        elsif str_inc = '1' then
+            mux_out <= pc_inc;
         else
             mux_out <= ext_std_input;
         end if;

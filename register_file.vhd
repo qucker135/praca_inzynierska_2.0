@@ -85,6 +85,7 @@ component mux_pc_input is
            ext_k_to_pc : in STD_LOGIC_VECTOR (12 downto 0);
            pc_inc : in STD_LOGIC_VECTOR (12 downto 0);
            ext_std_input : in STD_LOGIC_VECTOR (12 downto 0);
+           str_gwe : in STD_LOGIC;
            str_inc : in STD_LOGIC;
            str_k_to_pc : in STD_LOGIC;
            str_stack : in STD_LOGIC;
@@ -164,6 +165,7 @@ begin
         pc_inc => pom_pc_inc_sig_13,
         ext_std_input(12 downto 8) => pom_pc_out_sig_13(12 downto 8),
         ext_std_input(7 downto 0) => data_in,
+        str_gwe => pom_we_out_vec(2),
         str_inc => str_inc_pc,
         str_k_to_pc => str_k_to_pc,
         str_stack => str_from_stack,
