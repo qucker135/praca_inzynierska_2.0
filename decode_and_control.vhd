@@ -36,7 +36,7 @@ entity decode_and_control is
     Port ( clk : in STD_LOGIC;
            ir_in : in STD_LOGIC_VECTOR (13 downto 0);
            z_flag : in STD_LOGIC;
-           ir_rst : out STD_LOGIC;
+           ir_rest : out STD_LOGIC;
            we_ir : out STD_LOGIC;
            we_reg_file : out STD_LOGIC;
            we_wreg : out STD_LOGIC;
@@ -58,68 +58,134 @@ architecture Behavioral of decode_and_control is
 
     type clock_phase is (Q1, Q2, Q3, Q4);
 
-    signal clock_phase_s : clock_phase := Q1;
+    signal clock_phase_s : clock_phase := Q3;
 
 begin
 
     process(clk)
     begin
-        case to_integer(unsigned(ir_in)) is
-            when 16#700# to 16#7FF# => --ADDWF
-                datamux_s <= '1';
-                alu_op <= "00000"; -- ALU_ADD
-                stack_push_pop <= '-';
-                pre_wreg_mux_retlw_s <= '0';
-                case clock_phase_s is
-                    when Q1 =>
-                        clock_phase_s <= Q2;
-                        ir_rst <= '0';
-                        we_ir <= '1';
-                        we_reg_file <= '0';
-                        we_wreg <= '0';
-                        we_flags <= B"000";
-                        stack_enable <= '0';
-                        str_k_to_pc <= '0';
-                        str_pc_from_stack <= '0';
-                        gie_set <= '0';
-                        we_flags_caching_reg <= '0';
-                        str_inc_pc <= '1';
-                    when Q2 =>
-                        clock_phase_s <= Q3;
-                    when Q3 =>
-                        clock_phase_s <= Q4;
-                    when Q4 =>
-                        clock_phase_s <= Q1;
-                end case;
-            when others => -- NOP (TODO)
-                datamux_s <= '0';
-                alu_op <= "00000"; -- ALU_ADD
-                stack_push_pop <= '-';
-                pre_wreg_mux_retlw_s <= '0';
-
-                case clock_phase_s is
-                    when Q1 =>
-                        clock_phase_s <= Q2;
-                        ir_rst <= '0';
-                        we_ir <= '0';
-                        we_reg_file <= '0';
-                        we_wreg <= '0';
-                        we_flags <= B"000";
-                        stack_enable <= '0';
-                        str_k_to_pc <= '0';
-                        str_pc_from_stack <= '0';
-                        gie_set <= '0';
-                        we_flags_caching_reg <= '0';
-                        str_inc_pc <= '0';
-                    when Q2 =>
-                        clock_phase_s <= Q3;
-                    when Q3 =>
-                        clock_phase_s <= Q4;
-                    when Q4 =>
-                        clock_phase_s <= Q1;
-                end case;
-                
-        end case;
+        if rising_edge(clk) then
+            case to_integer(unsigned(ir_in)) is
+                when 16#A00# to 16#AFF# => -- INCF
+                    datamux_s <= '1';
+                    alu_op <= "10010"; -- ALU_INC
+                    stack_push_pop <= '-';
+                    pre_wreg_mux_retlw_s <= '0';
+                    case clock_phase_s is
+                        when Q1 =>
+                            clock_phase_s <= Q2;
+                            ir_rest <= '0';
+                            we_ir <= '0';
+                            we_reg_file <= ir_in(7);
+                            we_wreg <= not ir_in(7);
+                            we_flags <= B"000";
+                            stack_enable <= '0';
+                            str_k_to_pc <= '0';
+                            str_pc_from_stack <= '0';
+                            gie_set <= '0';
+                            we_flags_caching_reg <= '1';
+                            str_inc_pc <= '0';
+                        when Q2 =>
+                            clock_phase_s <= Q3;
+                            ir_rest <= '0';
+                            we_ir <= '0';
+                            we_reg_file <= '0';
+                            we_wreg <= '0';
+                            we_flags <= B"100";
+                            stack_enable <= '0';
+                            str_k_to_pc <= '0';
+                            str_pc_from_stack <= '0';
+                            gie_set <= '0';
+                            we_flags_caching_reg <= '0';
+                            str_inc_pc <= '0';
+                        when Q3 =>
+                            clock_phase_s <= Q4;
+                            ir_rest <= '0';
+                            we_ir <= '1';
+                            we_reg_file <= '0';
+                            we_wreg <= '0';
+                            we_flags <= B"000";
+                            stack_enable <= '0';
+                            str_k_to_pc <= '0';
+                            str_pc_from_stack <= '0';
+                            gie_set <= '0';
+                            we_flags_caching_reg <= '0';
+                            str_inc_pc <= '1';
+                        when Q4 =>
+                            clock_phase_s <= Q1;
+                            ir_rest <= '0';
+                            we_ir <= '0';
+                            we_reg_file <= '0';
+                            we_wreg <= '0';
+                            we_flags <= B"000";
+                            stack_enable <= '0';
+                            str_k_to_pc <= '0';
+                            str_pc_from_stack <= '0';
+                            gie_set <= '0';
+                            we_flags_caching_reg <= '0';
+                            str_inc_pc <= '0';
+                    end case;
+                when others => -- NOP (TODO)
+                    datamux_s <= '0';
+                    alu_op <= "00000"; -- ALU_ADD
+                    stack_push_pop <= '-';
+                    pre_wreg_mux_retlw_s <= '0';
+                    case clock_phase_s is
+                        when Q1 =>
+                            clock_phase_s <= Q2;
+                            ir_rest <= '0';
+                            we_ir <= '0';
+                            we_reg_file <= '0';
+                            we_wreg <= '0';
+                            we_flags <= B"000";
+                            stack_enable <= '0';
+                            str_k_to_pc <= '0';
+                            str_pc_from_stack <= '0';
+                            gie_set <= '0';
+                            we_flags_caching_reg <= '0';
+                            str_inc_pc <= '0';
+                        when Q2 =>
+                            clock_phase_s <= Q3;
+                            ir_rest <= '0';
+                            we_ir <= '0';
+                            we_reg_file <= '0';
+                            we_wreg <= '0';
+                            we_flags <= B"000";
+                            stack_enable <= '0';
+                            str_k_to_pc <= '0';
+                            str_pc_from_stack <= '0';
+                            gie_set <= '0';
+                            we_flags_caching_reg <= '0';
+                            str_inc_pc <= '0';
+                        when Q3 =>
+                            clock_phase_s <= Q4;
+                            ir_rest <= '0';
+                            we_ir <= '1';
+                            we_reg_file <= '0';
+                            we_wreg <= '0';
+                            we_flags <= B"000";
+                            stack_enable <= '0';
+                            str_k_to_pc <= '0';
+                            str_pc_from_stack <= '0';
+                            gie_set <= '0';
+                            we_flags_caching_reg <= '0';
+                            str_inc_pc <= '1';
+                        when Q4 =>
+                            clock_phase_s <= Q1;
+                            ir_rest <= '0';
+                            we_ir <= '0';
+                            we_reg_file <= '0';
+                            we_wreg <= '0';
+                            we_flags <= B"000";
+                            stack_enable <= '0';
+                            str_k_to_pc <= '0';
+                            str_pc_from_stack <= '0';
+                            gie_set <= '0';
+                            we_flags_caching_reg <= '0';
+                            str_inc_pc <= '0';
+                    end case;
+            end case;
+        end if;
     end process;
 
     addrmux_s <= '0' when ir_in(6 downto 0) = B"000_0000" else '1';

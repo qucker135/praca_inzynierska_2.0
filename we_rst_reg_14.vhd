@@ -34,7 +34,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity we_rst_reg_14 is
     Port ( clk : in STD_LOGIC;
            we : in STD_LOGIC;
-           rst : in STD_LOGIC;
+           rest : in STD_LOGIC;
            din : in STD_LOGIC_VECTOR (13 downto 0);
            dout : out STD_LOGIC_VECTOR (13 downto 0));
 end we_rst_reg_14;
@@ -46,7 +46,7 @@ begin
     process(clk)
     begin
         if rising_edge(clk) then
-            if rst = '1' then
+            if rest = '1' then
                 dout <= (others => '0');
             elsif we = '1' then
                 dout <= din;

@@ -42,7 +42,7 @@ architecture Behavioral of program_memory is
 
     type program_memory_type is array (0 to 2047) of STD_LOGIC_VECTOR(13 downto 0);
     
-    signal mem_contents : program_memory_type := (others => B"00_0000_0000_0000");
+    signal mem_contents : program_memory_type := (0 => B"00_1010_0111_1111", 1 => B"00_1010_1111_1111", 2 => B"00_1010_0111_1111", 3 => B"00_1010_1111_1111", 4 => B"00_1010_0111_1111", 5 => B"00_1010_1111_1111", others => B"00_0000_0000_0000");
 
 begin
 
