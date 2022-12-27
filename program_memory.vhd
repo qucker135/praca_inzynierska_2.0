@@ -43,15 +43,15 @@ architecture Behavioral of program_memory is
     type program_memory_type is array (0 to 2047) of STD_LOGIC_VECTOR(13 downto 0);
     
     signal mem_contents : program_memory_type := (
-        0 => B"11_1110_0000_0001", -- ADDLW
-        1 => B"00_1111_1111_1111", -- INCFSZ
-        2 => B"10_1000_0000_0000", -- GOTO
-        3 => B"00_1111_1111_1110", -- INCFSZ
-        4 => B"10_1000_0000_0000", -- GOTO
-        5 => B"00_1111_1111_1101", -- INCFSZ
-        6 => B"10_1000_0000_0000", -- GOTO
-        7 => B"00_1111_1111_1100", -- INCFSZ
-        8 => B"10_1000_0000_0000", -- GOTO
+        0 => B"00_1010_1111_1111", -- INCF
+        1 => B"10_0000_1100_0000", -- CALL
+        2 => B"11_0000_0000_0000", -- MOVLW
+        3 => B"10_1000_0000_0000", -- GOTO
+
+      192 => B"00_0011_1111_1111", -- DECF
+      193 => B"00_1111_1111_1111", -- INCFSZ
+      194 => B"11_0000_0101_0101", -- MOVLW
+      195 => B"00_0000_0000_1000", -- RETURN
         others => B"00_0000_0000_0000");
 
 begin
